@@ -254,6 +254,7 @@ e97_int free_llistPrecise(struct llist* list, struct llist* freeList) {
         current = current->next;
     }
 
+    free(list);
     return result;
 }
 
@@ -276,5 +277,6 @@ e97_int free_llist(struct llist* list, bool freeData) {
         }
     }
 
+    free(list);
     return result;
 }
