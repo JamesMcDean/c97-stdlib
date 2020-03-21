@@ -22,7 +22,6 @@ START_TEST(Add_and_remove_test) {
                 ck_assert(llist_check(subject) >= E97_NONE);
                 ck_assert(llist_append(subject, &temp[index]) >= E97_NONE);
                 ck_assert(subject->size == index + 1);
-
             }
 
             // Mid check
