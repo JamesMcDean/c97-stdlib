@@ -25,34 +25,35 @@ struct llist {
 };
 
 /*
-Checks to make sure that the list is properly built.
+Checks to make sure that the {param:}list is properly built.
 */
 e97_int llist_check(struct llist* list);
 
 /*
-Stores a piece of data to the index provided.
+Stores a piece of {param:}data to the {param:}index in the {param:}list.
 */
 e97_int llist_insert(struct llist* list, void* data, size_t index);
 
 /*
-Adds a piece of data to the end of the linked list.
+Adds a piece of {param:}data to the end of the linked {param:}list.
 */
 e97_int llist_append(struct llist* list, void* data);
 
 /*
-Stores a piece of data at the index provided into {param:}data, removing it from
-the linked list.
+Stores a piece of data at the {param:}index provided into {param:}data, 
+removing it from the linked {param:}list.
 */
 e97_int llist_remove(struct llist* list, size_t index, void** data);
 
 /*
 Stores the end piece of data from the linked list into {param:}data, removing it
-from the linked list.
+from the linked {param:}list.
 */
 e97_int llist_pop(struct llist* list, void** data);
 
 /*
-Frees the linked list, optionally freeing all data stored in the list.
+Frees the linked {param:}list, optionally freeing all data ({param:}freeData) 
+stored in the list.
 */
 e97_int free_llist(struct llist* list, bool freeData);
 
