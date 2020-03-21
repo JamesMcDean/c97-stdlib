@@ -52,15 +52,6 @@ from the linked list.
 e97_int llist_pop(struct llist* list, void** data);
 
 /*
-Frees the linked list, optionally freeing each item in the list. There are a
-few notes on operation.
-[{param:}freeList->size == {param:}list->size] or an error will return
-[{param:}freeList->[node]->(bool*)data] is how each value is stored
-{param:}freeList is checked for proper structure, but not erased
-*/
-e97_int free_llistPrecise(struct llist* list, struct llist* freeList);
-
-/*
 Frees the linked list, optionally freeing all data stored in the list.
 */
 e97_int free_llist(struct llist* list, bool freeData);

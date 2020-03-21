@@ -218,46 +218,6 @@ e97_int llist_pop(struct llist* list, void** data) {
     return llist_remove(list, list->size - 1, data);
 }
 
-e97_int free_llistPrecise(struct llist* list, struct llist* freeList) {
-    // Error checking
-    if (free_llistPrecise == NULL) return free_llist(list, false);
-    if (list == NULL) {
-        sprintf(E97_ERRSTR, __common_errors(E97_ARGUMENT_NULL));
-        return E97_ARGUMENT_NULL;
-    }
-    if (list->size != freeList->size) {
-        sprintf(E97_ERRSTR, 
-            "Error: param(list) and param(freeList) must be the same size.");
-        return E97_ARGUMENT_ERROR;
-    }
-
-    // Running data
-    e97_int result = E97_NONE;
-    void* data;
-    struct _llist_node* current = NULL;
-
-    // More error checking
-    if ((result = __llist_check(freeList, NULL, -1)) < 0) {
-        return result;
-    }
-    current = freeList->head;
-
-    // Free data
-    while (current != NULL && (result |= llist_remove(list, 0, NULL)) >= 0) {
-        if ((result = llist_remove(list, 0, &data)) < 0) {
-            return result;
-        }
-
-        if (data != NULL && *((bool*) current->data)) {
-            free(data);
-        }
-        current = current->next;
-    }
-
-    free(list);
-    return result;
-}
-
 e97_int free_llist(struct llist* list, bool freeData) {
     // Running data
     e97_int result = E97_NONE;
