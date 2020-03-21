@@ -22,10 +22,14 @@ enum C97_ERRORS {
     
     E97_ARGUMENT_ERROR = ERR_CONV(1ul << 8ul),
     E97_ARGUMENT_NULL = ERR_CONV(1ul << 9ul) | E97_ARGUMENT_ERROR,
+    E97_ARGUMENT_RANGE = ERR_CONV(1ul << 10ul) | E97_ARGUMENT_ERROR,
     
     E97_LLIST_BAD_CLOSE = ERR_CONV(1ul << 16ul),
     E97_LLIST_BROKEN_LINK = ERR_CONV(1ul << 17ul),
-    E97_LLIST_EMPTY = ERR_CONV(1ul << 18ul) | E97_ARGUMENT_ERROR
+    E97_LLIST_EMPTY = ERR_CONV(1ul << 18ul) | E97_ARGUMENT_ERROR,
+
+    E97_VECTOR_BAD_CLOSE = ERR_CONV(1ul << 19ul),
+    E97_VECTOR_NOT_CLEAR = ERR_CONV(1ul << 20ul)
 };
 
 #undef ERR_CONV(x)
@@ -33,7 +37,9 @@ enum C97_ERRORS {
 enum C97_WARNINGS {
     W97_NONE = 0ul,
 
-    W97_LIST_TERMINATION = 1ul << 0ul
+    W97_TERMINATION = 1ul << 0ul,
+    W97_NOTFREED = 1ul << 1ul,
+    W97_FREED = 1ul << 2ul
 };
 
 static inline char* __common_errors(e97_int error) {
@@ -56,6 +62,28 @@ static inline char* __common_errors(e97_int error) {
 
         case E97_ARGUMENT_NULL: {
             return "Error: Argument NULL.";
+        }
+
+        case E97_ARGUMENT_RANGE: {
+            return "Error: Argument out of range.";
+        }
+    }
+
+    return NULL;
+}
+
+static inline char* __common_warnings(e97_int warning) {
+    switch (warning) {
+        case W97_TERMINATION: {
+            return "Warning: This termination could be bad.";
+        }
+        
+        case W97_NOTFREED: {
+            return "Warning: Something was not freed.";
+        }
+
+        case W97_FREED: {
+            return "Warning: This appears to have already been freed.";
         }
     }
 
