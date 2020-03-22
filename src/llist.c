@@ -2,6 +2,7 @@
 
 e97_int __llist_check(struct llist* list, struct _llist_node** target, ssize_t index) {
     // Running data
+    E97_ERRSTR[0] = '\0';
     e97_int result = E97_NONE;
 
     // Is there a list
@@ -81,6 +82,8 @@ e97_int llist_check(struct llist* list) {
 }
 
 e97_int llist_insert(struct llist* list, void* data, size_t index) {
+    // Running data
+    E97_ERRSTR[0] = '\0';
     e97_int result = E97_NONE;
 
     // Appending
@@ -170,12 +173,16 @@ e97_int llist_append(struct llist* list, void* data) {
 }
 
 e97_int llist_remove(struct llist* list, size_t index, void** data) {
+    // Error init
+    E97_ERRSTR[0] = '\0';
+
     // Get and error check
     if (list->size == 0) {
         sprintf(E97_ERRSTR, "Error: Nothing to remove, llist is empty.");
         return E97_LLIST_EMPTY;
     } 
 
+    // Running data
     struct _llist_node* current;
     e97_int result = __llist_check(list, &current, index);
     if (result < 0) return result;
@@ -220,6 +227,7 @@ e97_int llist_pop(struct llist* list, void** data) {
 
 e97_int free_llist(struct llist* list, bool freeData) {
     // Running data
+    E97_ERRSTR[0] = '\0';
     e97_int result = E97_NONE;
     void* data;
     size_t dataIndex = list->size;

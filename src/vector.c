@@ -2,6 +2,7 @@
 
 e97_int vector_check(struct vector* vec) {
     // Running data
+    E97_ERRSTR[0] = '\0';
     e97_int result = E97_NONE;
 
     // Testing
@@ -27,6 +28,7 @@ e97_int vector_check(struct vector* vec) {
 
 e97_int _vector_double(struct vector* vec) {
     // Running data
+    E97_ERRSTR[0] = '\0';
     e97_int result;
 
     // Error checks
@@ -45,6 +47,7 @@ e97_int _vector_double(struct vector* vec) {
 
 e97_int vector_init(struct vector* vec) {
     // Running data
+    E97_ERRSTR[0] = '\0';
     e97_int result = E97_NONE;
 
     // Error checks
@@ -59,8 +62,8 @@ e97_int vector_init(struct vector* vec) {
         vec->data = calloc(vec->_capacity, sizeof(void*));
     }
     else {
-        vec->data = calloc(DEFAULT_VECTOR_SIZE, sizeof(void*));
-        vec->_capacity = DEFAULT_VECTOR_SIZE;
+        vec->data = calloc(DEFAULT_VECTOR_CAPACITY, sizeof(void*));
+        vec->_capacity = DEFAULT_VECTOR_CAPACITY;
     }
     vec->size = 0;
 
@@ -69,6 +72,7 @@ e97_int vector_init(struct vector* vec) {
 
 e97_int vector_insert(struct vector* vec, void* data, size_t index) {
     // Running data
+    E97_ERRSTR[0] = '\0';
     e97_int result = E97_NONE;
 
     // Error checks
@@ -105,6 +109,7 @@ e97_int vector_append(struct vector* vec, void* data) {
 
 e97_int vector_remove(struct vector* vec, size_t index, void** data) {
     // Running data
+    E97_ERRSTR[0] = '\0';
     e97_int result = E97_NONE;
 
     // Error checking
@@ -129,11 +134,14 @@ e97_int vector_remove(struct vector* vec, size_t index, void** data) {
 
 e97_int vector_pop(struct vector* vec, void** data) {
     // This purposefully throws an error when the vector is empty
-    return vec->size == 0 ? vector_remove(vec, DEFAULT_VECTOR_SIZE, data) 
+    return vec->size == 0 ? vector_remove(vec, DEFAULT_VECTOR_CAPACITY, data) 
         : vector_remove(vec, vec->size - 1, data);
 }
 
 e97_int free_vec(struct vector* vec, bool freeData) {
+    // Error init
+    E97_ERRSTR[0] = '\0';
+
     // Check to make sure that the vector is not NULL
     if (vec == NULL) {
         sprintf(E97_ERRSTR, __common_errors(E97_ARGUMENT_NULL));
