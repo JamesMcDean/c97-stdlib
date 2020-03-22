@@ -6,7 +6,7 @@
 /*
 1K entries seems like a decent amount that *probably* won't break a page.
 */
-#define DEFAULT_VECTOR_SIZE 1 << 10
+#define DEFAULT_VECTOR_CAPACITY 1 << 10
 
 /*
 A simple expanding vector. It should be noted, {param:}data is stored as void**,
