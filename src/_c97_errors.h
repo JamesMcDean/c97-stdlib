@@ -16,20 +16,25 @@ enum C97_ERRORS {
     E97_NONE = 0,
 
     E97_INVALID_DATATYPE = ERR_CONV(1ul << 0ul),
-    E97_BROKEN_DATATYPE = ERR_CONV((1ul << 1ul) | E97_INVALID_DATATYPE),
-
+    E97_BROKEN_DATATYPE = ERR_CONV(1ul << 1ul) | E97_INVALID_DATATYPE,
+    E97_UNINITIALIZED_DATATYPE = ERR_CONV(1ul << 2ul) | E97_INVALID_DATATYPE,
+    E97_INITIALIZED_DATATYPE = ERR_CONV(1ul << 3ul) | E97_INVALID_DATATYPE,
     E97_NULL_POINTER = ERR_CONV(1ul << 4ul),
+    E97_BAD_CLOSE = ERR_CONV(1ul << 5ul),
     
     E97_ARGUMENT_ERROR = ERR_CONV(1ul << 8ul),
     E97_ARGUMENT_NULL = ERR_CONV(1ul << 9ul) | E97_ARGUMENT_ERROR,
     E97_ARGUMENT_RANGE = ERR_CONV(1ul << 10ul) | E97_ARGUMENT_ERROR,
     
-    E97_LLIST_BAD_CLOSE = ERR_CONV(1ul << 16ul),
+    E97_LLIST_BAD_CLOSE = ERR_CONV(1ul << 16ul) | E97_BAD_CLOSE,
     E97_LLIST_BROKEN_LINK = ERR_CONV(1ul << 17ul),
     E97_LLIST_EMPTY = ERR_CONV(1ul << 18ul) | E97_ARGUMENT_ERROR,
 
-    E97_VECTOR_BAD_CLOSE = ERR_CONV(1ul << 19ul),
-    E97_VECTOR_NOT_CLEAR = ERR_CONV(1ul << 20ul)
+    E97_VECTOR_BAD_CLOSE = ERR_CONV(1ul << 19ul) | E97_BAD_CLOSE,
+    E97_VECTOR_NOT_CLEAR = ERR_CONV(1ul << 20ul),
+
+    E97_HMAP_MISSING_FUNCTION = ERR_CONV(1ul << 21ul),
+    E97_HMAP_BAD_CLOSE = ERR_CONV(1ul << 22ul) | E97_BAD_CLOSE
 };
 
 #undef ERR_CONV(x)
@@ -39,7 +44,12 @@ enum C97_WARNINGS {
 
     W97_TERMINATION = 1ul << 0ul,
     W97_NOTFREED = 1ul << 1ul,
-    W97_FREED = 1ul << 2ul
+    W97_FREED = 1ul << 2ul,
+
+    W97_HASH_REPLACE = 1ul << 8ul,
+    W97_HASH_NOHASH = 1ul << 9ul,
+    W97_HASH_NOCOMPARE = 1ul << 10ul,
+    W97_LIST_TERMINATION = 1ul << 11ul
 };
 
 static inline char* __common_errors(e97_int error) {
@@ -66,6 +76,10 @@ static inline char* __common_errors(e97_int error) {
 
         case E97_ARGUMENT_RANGE: {
             return "Error: Argument out of range.";
+        }
+
+        case E97_UNINITIALIZED_DATATYPE: {
+            return "Error: Datatype has not be initialized yet.";
         }
     }
 
