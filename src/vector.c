@@ -128,6 +128,10 @@ e97_int vector_remove(struct vector* vec, size_t index, void** data) {
     for (size_t jndex = index; jndex < vec->size - 1; jndex++) {
         vec->data[jndex] = vec->data[jndex + 1];
     }
+    vec->data[vec->size - 1] = NULL;
+
+    // Lower size
+    vec->size -= 1;
 
     return result;
 }
@@ -136,6 +140,32 @@ e97_int vector_pop(struct vector* vec, void** data) {
     // This purposefully throws an error when the vector is empty
     return vec->size == 0 ? vector_remove(vec, DEFAULT_VECTOR_CAPACITY, data) 
         : vector_remove(vec, vec->size - 1, data);
+}
+
+e97_int vector_clear(struct vector* vec, bool freeData) {
+    // Running data
+    E97_ERRSTR[0] = '\0';
+    e97_int result = E97_NONE;
+
+    // Error checks
+    if ((result = vector_check(vec)) < 0) {
+        return result;
+    }
+
+    // Free data option
+    if (freeData) {
+        void* current;
+        for (size_t index = 0; index < vec->_capacity; index++) {
+            current = vec->data[index];
+        }
+
+        if (current != NULL);
+    }
+
+    // Set size to zero
+    vec->size = 0;
+
+    return result;
 }
 
 e97_int free_vec(struct vector* vec, bool freeData) {
