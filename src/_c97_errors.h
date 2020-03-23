@@ -4,9 +4,13 @@
 #include <stdint.h>
 #include <stdio.h>
 
+// Normal return
 typedef uint32_t c97_int;
+
+// Error capable return
 typedef int64_t e97_int;
 
+// Error String definitions
 #define E97_ERROR_STRING_MAX_CHAR 4 * (1 << 10) - 1
 char E97_ERRSTR[E97_ERROR_STRING_MAX_CHAR + 1] = {'\0'};
 bool E97_BLOCKCLEAR = false;
@@ -21,6 +25,7 @@ bool E97_BLOCKCLEAR = false;
     }\
 }
 
+// Error definitions
 #define ERR_CONV(x) ((1 << 31) | (x)) << 32
 
 enum C97_ERRORS {
@@ -50,6 +55,7 @@ enum C97_ERRORS {
 
 #undef ERR_CONV(x)
 
+// Warning definitions
 enum C97_WARNINGS {
     W97_NONE = 0ul,
 
@@ -64,6 +70,10 @@ enum C97_WARNINGS {
     W97_LIST_TERMINATION = 1ul << 11ul
 };
 
+/*
+Turns an {param:}error code into a string that does not need to be freed. If
+{param:}error does not have a prebuilt string, NULL is returned.
+*/
 static inline char* __common_errors(e97_int error) {
     switch (error) {
         case E97_NONE: {
@@ -98,6 +108,10 @@ static inline char* __common_errors(e97_int error) {
     return NULL;
 }
 
+/*
+Turns a {param:}warning code into a string that does not need to be freed. If
+{param:}warning does not have a prebuilt string, NULL is returned.
+*/
 static inline char* __common_warnings(e97_int warning) {
     switch (warning) {
         case W97_TERMINATION: {
