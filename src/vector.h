@@ -54,6 +54,12 @@ be freed.
 e97_int vector_pop(struct vector* vec, void** data);
 
 /*
+Sets the {param:}vec size to zero, optionally freeing all in range data before 
+doing so ({param:}freeData).
+*/
+e97_int vector_clear(struct vector* vec, bool freeData);
+
+/*
 Frees the vector.
 */
 e97_int free_vec(struct vector* vec, bool freeData);
