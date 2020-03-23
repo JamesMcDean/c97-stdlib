@@ -9,6 +9,16 @@ typedef int64_t e97_int;
 
 #define E97_ERROR_STRING_MAX_CHAR 4 * (1 << 10) - 1
 char E97_ERRSTR[E97_ERROR_STRING_MAX_CHAR + 1] = {'\0'};
+#define E97_ERRSTR_CLR() { E97_ERRSTR[0] = '\0'; }
+#define E97_ERRSTR_ISCLR() (E97_ERRSTR[0] == '\0')
+#define E97_ERRSTR_WRITE(newErr) {\
+    if (E97_ERRSTR_ISCLR()) {\
+        sprintf(E97_ERRSTR, (newErr));\
+    }\
+    else {\
+        sprintf(E97_ERRSTR, "%s: %s", E97_ERRSTR, (newErr));\
+    }\
+}
 
 #define ERR_CONV(x) ((1 << 31) | (x)) << 32
 
@@ -45,6 +55,7 @@ enum C97_WARNINGS {
     W97_TERMINATION = 1ul << 0ul,
     W97_NOTFREED = 1ul << 1ul,
     W97_FREED = 1ul << 2ul,
+    W97_SIZE_MISMATCH = 1ul << 3ul,
 
     W97_HASH_REPLACE = 1ul << 8ul,
     W97_HASH_NOHASH = 1ul << 9ul,
