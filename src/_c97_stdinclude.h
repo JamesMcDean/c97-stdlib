@@ -12,6 +12,6 @@
 
 #include <sys/types.h>
 
-#include "_c97_errors.h"
+#include "c97_errors.h"
 
 #endif
