@@ -63,6 +63,8 @@ enum C97_WARNINGS {
     W97_NOTFREED = 1ul << 1ul,
     W97_FREED = 1ul << 2ul,
     W97_SIZE_MISMATCH = 1ul << 3ul,
+    W97_NOTFOUND = 1ul << 4ul,
+    W97_FOUND = 1ul << 5ul,
 
     W97_HASH_REPLACE = 1ul << 8ul,
     W97_HASH_NOHASH = 1ul << 9ul,
