@@ -1,4 +1,4 @@
-NAME = c97stdlib						# Name of shared library
+NAME = c97stdlib
 CC = gcc
 CFLAGS = -O3 -Wno-cpp
 DFLAGS = $(CFLAGS) -g
