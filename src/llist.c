@@ -2,13 +2,12 @@
 
 e97_int __llist_check(struct llist* list, struct _llist_node** target, ssize_t index) {
     // Running data
-    E97_ERRSTR[0] = '\0';
     e97_int result = E97_NONE;
+    char temp[E97_ERROR_STRING_MAX_CHAR];
 
     // Is there a list
     if (list == NULL) {
-        char* error = __common_errors(E97_ARGUMENT_NULL);
-        sprintf(E97_ERRSTR, error);
+        E97_ERRSTR_WRITE(__common_errors(E97_ARGUMENT_NULL));
         return E97_ARGUMENT_NULL;
     }
 
@@ -16,14 +15,13 @@ e97_int __llist_check(struct llist* list, struct _llist_node** target, ssize_t i
     if (list->size == 0) {
         if (list->head == NULL && list->tail == NULL) return E97_NONE;
 
-        sprintf(E97_ERRSTR, "Error: Index is incorrect, llist broken.");
+        E97_ERRSTR_WRITE("Error: Index is incorrect, llist broken.");
         return E97_BROKEN_DATATYPE | E97_LLIST_BROKEN_LINK;
     }
 
     if (list->head == NULL && list->size > 0) {
-        sprintf(E97_ERRSTR, "Error: Head broken on llist.");
-        e97_int result = E97_OR(E97_INVALID_DATATYPE, E97_BROKEN_DATATYPE);
-        return E97_OR(result, E97_NULL_POINTER);
+        E97_ERRSTR_WRITE("Error: Head broken on llist.");
+        return result | E97_INITIALIZED_DATATYPE | E97_NULL_POINTER;
     }
     
     // Check completion
@@ -33,14 +31,15 @@ e97_int __llist_check(struct llist* list, struct _llist_node** target, ssize_t i
     // Initial links
     do {
         if (current->next == NULL) {
-            sprintf(E97_ERRSTR, "Error: The node at llist[%lu] is missing the next link.", jndex);
+            sprintf(temp, "Error: The node at llist[%lu] is missing the next link.", jndex);
+            E97_ERRSTR_WRITE(temp);
             return E97_LLIST_BROKEN_LINK;
         }
 
         // Return data if requested
         if (index >= 0 && index == jndex) {
             if (target == NULL) {
-                sprintf(E97_ERRSTR, __common_errors(E97_ARGUMENT_NULL));
+                E97_ERRSTR_WRITE(__common_errors(E97_ARGUMENT_NULL));
                 return E97_ARGUMENT_NULL;
             }
 
@@ -55,7 +54,7 @@ e97_int __llist_check(struct llist* list, struct _llist_node** target, ssize_t i
     // Circular
     if (list->circular) {
         if (current->next != list->head) {
-            sprintf(E97_ERRSTR, "Error: List is not circular.");
+            E97_ERRSTR_WRITE("Error: List is not circular.");
             return E97_BROKEN_DATATYPE | E97_LLIST_BROKEN_LINK;
         }
 
@@ -64,12 +63,11 @@ e97_int __llist_check(struct llist* list, struct _llist_node** target, ssize_t i
     
     // Linear
     if (current->next != NULL) {
-        sprintf(E97_ERRSTR, "Warning: The tail of the list is not terminated.");
+        E97_ERRSTR_WRITE("Warning: The tail of the list is not terminated.");
         result |= W97_LIST_TERMINATION;
     }
     if (list->tail != current) {
-        sprintf(E97_ERRSTR, "%sError: The tail of the string is not equal to the last index.",
-            result == E97_NONE ? "" : ": ");
+        E97_ERRSTR_WRITE("Error: The tail of the string is not equal to the last index.");
 
         return result | E97_LLIST_BROKEN_LINK;
     }
@@ -78,12 +76,13 @@ e97_int __llist_check(struct llist* list, struct _llist_node** target, ssize_t i
 }
 
 e97_int llist_check(struct llist* list) {
+    E97_ERRSTR_CLR();
     return __llist_check(list, NULL, -1);
 }
 
 e97_int llist_insert(struct llist* list, void* data, size_t index) {
     // Running data
-    E97_ERRSTR[0] = '\0';
+    E97_ERRSTR_CLR();
     e97_int result = E97_NONE;
 
     // Appending
@@ -172,10 +171,7 @@ e97_int llist_append(struct llist* list, void* data) {
     return llist_insert(list, data, list->size);
 }
 
-e97_int llist_remove(struct llist* list, size_t index, void** data) {
-    // Error init
-    E97_ERRSTR[0] = '\0';
-
+e97_int __llist_remove(struct llist* list, size_t index, void** data) {
     // Get and error check
     if (list->size == 0) {
         sprintf(E97_ERRSTR, "Error: Nothing to remove, llist is empty.");
@@ -221,26 +217,31 @@ e97_int llist_remove(struct llist* list, size_t index, void** data) {
     return result;
 }
 
+e97_int llist_remove(struct llist* list, size_t index, void** data) {
+    E97_ERRSTR_CLR();
+    return __llist_remove(list, index, data);
+}
+
 e97_int llist_pop(struct llist* list, void** data) {
     return llist_remove(list, list->size - 1, data);
 }
 
 e97_int free_llist(struct llist* list, bool freeData) {
     // Running data
-    E97_ERRSTR[0] = '\0';
+    E97_ERRSTR_CLR();
     e97_int result = E97_NONE;
     void* data;
     size_t dataIndex = list->size;
 
     // Free data
     if (freeData) {
-        while (dataIndex > 0 && (result |= llist_remove(list, 0, &data)) >= 0) {
+        while (dataIndex > 0 && (result |= __llist_remove(list, 0, &data)) >= 0) {
             free(data);
             dataIndex -= 1;
         }
     }
     else {
-        while (dataIndex > 0 && (result |= llist_remove(list, 0, NULL)) >= 0) {
+        while (dataIndex > 0 && (result |= __llist_remove(list, 0, NULL)) >= 0) {
             dataIndex -= 1;
         }
     }

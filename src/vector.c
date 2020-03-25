@@ -1,39 +1,36 @@
 #include "vector.h"
 
-e97_int vector_check(struct vector* vec) {
+e97_int __vector_check(struct vector* vec) {
     // Running data
-    E97_ERRSTR[0] = '\0';
     e97_int result = E97_NONE;
 
     // Testing
     if (vec == NULL) {
-        sprintf(E97_ERRSTR, "Error: Vector is NULL.");
+        E97_ERRSTR_WRITE("Error: Vector is NULL.");
         return E97_ARGUMENT_NULL;
     }
     if (vec->_capacity == 0 && vec->data != NULL) {
-        sprintf(E97_ERRSTR, "Warning: Vector not freed when cleared.");
+        E97_ERRSTR_WRITE("Warning: Vector not freed when cleared.");
         result |= W97_NOTFREED;
     }
     if (vec->size > vec->_capacity) {
-        sprintf(E97_ERRSTR, "Error: Vector did not close correctly.");
+        E97_ERRSTR_WRITE("Error: Vector did not close correctly.");
         return result | E97_VECTOR_BAD_CLOSE;
     }
     if (vec->_capacity > 0 && vec->data == NULL) {
-        sprintf(E97_ERRSTR, "Error: Vector missing data.");
+        E97_ERRSTR_WRITE("Error: Vector missing data.");
         return result | E97_BROKEN_DATATYPE;
     }
 
     return result;
 }
 
-e97_int _vector_double(struct vector* vec) {
-    // Running data
-    E97_ERRSTR[0] = '\0';
-    e97_int result;
+e97_int vector_check(struct vector* vec) {
+    E97_ERRSTR_CLR();
+    return __vector_check(vec);
+}
 
-    // Error checks
-    if ((result = vector_check(vec)) < 0) return result;
-
+void __vector_double(struct vector* vec) {
     // Expand and 0
     size_t newCap = vec->_capacity * 2;
     vec->data = realloc(vec->data, newCap);
@@ -41,22 +38,9 @@ e97_int _vector_double(struct vector* vec) {
         vec->data[index] = NULL;
     }
     vec->_capacity = newCap;
-
-    return result;
 }
 
-e97_int vector_init(struct vector* vec) {
-    // Running data
-    E97_ERRSTR[0] = '\0';
-    e97_int result = E97_NONE;
-
-    // Error checks
-    if ((result = vector_check(vec)) < 0) return result;
-    if (vec->data != NULL) {
-        sprintf(E97_ERRSTR, "Warning: Vector still has data.");
-        return W97_NOTFREED | result;
-    }
-
+void __vector_init(struct vector* vec) {
     // Populate
     if (vec->_capacity > 0) {
         vec->data = calloc(vec->_capacity, sizeof(void*));
@@ -66,29 +50,43 @@ e97_int vector_init(struct vector* vec) {
         vec->_capacity = DEFAULT_VECTOR_CAPACITY;
     }
     vec->size = 0;
+}
+
+e97_int vector_init(struct vector* vec) {
+    // Running data
+    E97_ERRSTR_CLR();
+    e97_int result = E97_NONE;
+
+    // Error checks
+    if ((result = __vector_check(vec)) < 0) return result;
+    if (vec->data != NULL) {
+        E97_ERRSTR_WRITE("Warning: Vector still has data.");
+        return W97_NOTFREED | result;
+    }
+
+    // Actually init
+    __vector_init(vec);
 
     return result;
 }
 
 e97_int vector_insert(struct vector* vec, void* data, size_t index) {
     // Running data
-    E97_ERRSTR[0] = '\0';
+    E97_ERRSTR_CLR();
     e97_int result = E97_NONE;
 
     // Error checks
-    if ((result = vector_check(vec)) < 0) return result;
+    if ((result = __vector_check(vec)) < 0) return result;
 
     // Expand if needed and recurse
     if (index >= vec->size) vec->size = index + 1;
-    if (vec->size + 1 >= vec->_capacity) {
+    while (vec->size + 1 >= vec->_capacity) {
         if (vec->size == 0) {
-            result |= vector_init(vec);
+            __vector_init(vec);
         }
         else {
-            result |= _vector_double(vec);
+            __vector_double(vec);
         }
-
-        return vector_insert(vec, data, index);
     }
 
     // Shift
@@ -109,15 +107,13 @@ e97_int vector_append(struct vector* vec, void* data) {
 
 e97_int vector_remove(struct vector* vec, size_t index, void** data) {
     // Running data
-    E97_ERRSTR[0] = '\0';
+    E97_ERRSTR_CLR();
     e97_int result = E97_NONE;
 
     // Error checking
-    if ((result = vector_check(vec)) < 0) return result;
+    if ((result = __vector_check(vec)) < 0) return result;
     if (index >= vec->size) {
-        sprintf(E97_ERRSTR, 
-            E97_ERRSTR[0] = '\0' ? "%s%s" : "%s: %s", E97_ERRSTR, 
-            __common_errors(E97_ARGUMENT_RANGE));
+        E97_ERRSTR_WRITE(__common_errors(E97_ARGUMENT_RANGE));
         return result | E97_ARGUMENT_RANGE;
     }
 
@@ -144,11 +140,11 @@ e97_int vector_pop(struct vector* vec, void** data) {
 
 e97_int vector_clear(struct vector* vec, bool freeData) {
     // Running data
-    E97_ERRSTR[0] = '\0';
+    E97_ERRSTR_CLR();
     e97_int result = E97_NONE;
 
     // Error checks
-    if ((result = vector_check(vec)) < 0) {
+    if ((result = __vector_check(vec)) < 0) {
         return result;
     }
 
@@ -170,11 +166,11 @@ e97_int vector_clear(struct vector* vec, bool freeData) {
 
 e97_int free_vec(struct vector* vec, bool freeData) {
     // Error init
-    E97_ERRSTR[0] = '\0';
+    E97_ERRSTR_CLR();
 
     // Check to make sure that the vector is not NULL
     if (vec == NULL) {
-        sprintf(E97_ERRSTR, __common_errors(E97_ARGUMENT_NULL));
+        E97_ERRSTR_WRITE(__common_errors(E97_ARGUMENT_NULL));
         return E97_ARGUMENT_NULL | (freeData ? W97_NOTFREED : E97_NONE);
     }
 
@@ -186,7 +182,7 @@ e97_int free_vec(struct vector* vec, bool freeData) {
     }
     if (vec->data != NULL) free(vec->data);
     else {
-        sprintf(E97_ERRSTR, __common_warnings(W97_FREED));
+        E97_ERRSTR_WRITE(__common_warnings(W97_FREED));
         return W97_FREED;
     }
     
