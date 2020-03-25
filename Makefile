@@ -13,15 +13,15 @@ endef
 
 default: $(FILES)
 	make clean
-	$(call BUILD_LIB,CFLAGS)
+	$(call BUILD_LIB,$(CFLAGS))
 
 debug: $(FILES)
 	make clean
-	$(call BUILD_LIB,DFLAGS)
+	$(call BUILD_LIB,$(DFLAGS))
 
 verbose: $(FILES)
 	make clean
-	$(call BUILD_LIB,VFLAGS)
+	$(call BUILD_LIB,$(VFLAGS))
 
 clean:
 	rm -rf ./bld/*
