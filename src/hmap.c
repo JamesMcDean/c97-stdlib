@@ -68,51 +68,6 @@ e97_int __hmap_expand(struct hmap* map) {
     return result;
 }
 
-e97_int hmap_init(struct hmap* map, hash_t (*keyHash)(void*), 
-    int (*keyCompare)(void*, void*)) {
-    // Running data
-    E97_ERRSTR_CLR();
-    e97_int result = E97_NONE;
-
-    // Error checks
-    if (map == NULL) {
-        E97_ERRSTR_WRITE(__common_errors(E97_ARGUMENT_NULL));
-        return E97_ARGUMENT_NULL;
-    }
-    if (map->initialized) {
-        E97_ERRSTR_WRITE("Error: The map is already initialized.");
-        return E97_INITIALIZED_DATATYPE;
-    }
-    if (map->entries != NULL) {
-        E97_ERRSTR_WRITE("Error: The map still has data, bad close?");
-        return E97_HMAP_BAD_CLOSE;
-    }
-    if (map->keyHash == NULL) {
-        E97_ERRSTR_WRITE("Warning: Null {param:}keyHash, using default.");
-        map->keyHash = __default_hash;
-        result |= W97_HASH_NOHASH;
-    }
-    if (map->keyCompare == NULL) {
-        E97_ERRSTR_WRITE("Warning: Null {param:}keyCompare, using default.");
-
-        map->keyCompare = __default_compare;
-        result |= W97_HASH_NOCOMPARE;
-    }
-
-    // Init map
-    map->initialized = true;
-
-    map->count = 0;
-    if (map->_capacity == 0) map->_capacity = DEFAULT_MAP_CAPACITY;
-
-    map->keyHash = keyHash;
-    map->keyCompare = keyCompare;
-
-    map->entries = calloc(map->_capacity, sizeof(struct _hmap_entry));
-
-    return result;
-}
-
 c97_int __hmap_get(struct hmap* map, void* key, struct _hmap_entry** result) {
     // Find the key
     hash_t hash = map->keyHash(key);
@@ -135,51 +90,6 @@ c97_int __hmap_get(struct hmap* map, void* key, struct _hmap_entry** result) {
     *result = entry;
 
     return entry->key == NULL ? W97_NOTFOUND : W97_FOUND;
-}
-
-e97_int hmap_get(struct hmap* map, void* key, void** value) {
-    // Error checking
-    E97_ERRSTR_CLR();
-    e97_int result = E97_NONE;
-
-    if (key == NULL) {
-        E97_ERRSTR_WRITE("Error: The {param:}key cannot be NULL.")
-        return result | E97_ARGUMENT_NULL;
-    }
-    if (value == NULL) {
-        E97_ERRSTR_WRITE("Error: The {param:}value cannot be NULL.");
-        return result | E97_ARGUMENT_NULL;
-    }
-    if ((result |= __hmap_check(map)) < 0) return result;
-
-    // Get the data
-    struct _hmap_entry* temp;
-    result |= __hmap_get(map, key, &temp);
-    *value = temp->value;
-
-    return result;
-}
-
-e97_int hmap_contains(struct hmap* map, void* key, bool* result) {
-    // Running data
-    E97_ERRSTR_CLR();
-    e97_int iresult = E97_NONE;
-
-    // Error checks
-    if (key == NULL || result == NULL) {
-        E97_ERRSTR_WRITE(__common_errors(E97_ARGUMENT_NULL));
-        return E97_ARGUMENT_NULL;
-    }
-    if ((iresult = __hmap_check(map)) < 0) {
-        return iresult;
-    }
-
-    // Search fpr the key's enrty
-    struct _hmap_entry* temp;
-    iresult |= __hmap_get(map, key, &temp);
-    *result = (temp->key != NULL);
-
-    return iresult;
 }
 
 e97_int __hmap_put(struct hmap* map, void* key, void* value, void** oldValue) {
@@ -225,6 +135,96 @@ e97_int __hmap_put(struct hmap* map, void* key, void* value, void** oldValue) {
     }
 
     return result;
+}
+
+e97_int hmap_init(struct hmap* map, hash_t (*keyHash)(void*), 
+    int (*keyCompare)(void*, void*)) {
+    // Running data
+    E97_ERRSTR_CLR();
+    e97_int result = E97_NONE;
+
+    // Error checks
+    if (map == NULL) {
+        E97_ERRSTR_WRITE(__common_errors(E97_ARGUMENT_NULL));
+        return E97_ARGUMENT_NULL;
+    }
+    if (map->initialized) {
+        E97_ERRSTR_WRITE("Error: The map is already initialized.");
+        return E97_INITIALIZED_DATATYPE;
+    }
+    if (map->entries != NULL) {
+        E97_ERRSTR_WRITE("Error: The map still has data, bad close?");
+        return E97_HMAP_BAD_CLOSE;
+    }
+    if (map->keyHash == NULL) {
+        E97_ERRSTR_WRITE("Warning: Null {param:}keyHash, using default.");
+        map->keyHash = __default_hash;
+        result |= W97_HASH_NOHASH;
+    }
+    if (map->keyCompare == NULL) {
+        E97_ERRSTR_WRITE("Warning: Null {param:}keyCompare, using default.");
+
+        map->keyCompare = __default_compare;
+        result |= W97_HASH_NOCOMPARE;
+    }
+
+    // Init map
+    map->initialized = true;
+
+    map->count = 0;
+    if (map->_capacity == 0) map->_capacity = DEFAULT_MAP_CAPACITY;
+
+    map->keyHash = keyHash;
+    map->keyCompare = keyCompare;
+
+    map->entries = calloc(map->_capacity, sizeof(struct _hmap_entry));
+
+    return result;
+}
+
+e97_int hmap_get(struct hmap* map, void* key, void** value) {
+    // Error checking
+    E97_ERRSTR_CLR();
+    e97_int result = E97_NONE;
+
+    if (key == NULL) {
+        E97_ERRSTR_WRITE("Error: The {param:}key cannot be NULL.")
+        return result | E97_ARGUMENT_NULL;
+    }
+    if (value == NULL) {
+        E97_ERRSTR_WRITE("Error: The {param:}value cannot be NULL.");
+        return result | E97_ARGUMENT_NULL;
+    }
+    if ((result |= __hmap_check(map)) < 0) return result;
+
+    // Get the data
+    struct _hmap_entry* temp;
+    result |= __hmap_get(map, key, &temp);
+    *value = temp->value;
+
+    return result;
+}
+
+e97_int hmap_contains(struct hmap* map, void* key, bool* result) {
+    // Running data
+    E97_ERRSTR_CLR();
+    e97_int iresult = E97_NONE;
+
+    // Error checks
+    if (key == NULL || result == NULL) {
+        E97_ERRSTR_WRITE(__common_errors(E97_ARGUMENT_NULL));
+        return E97_ARGUMENT_NULL;
+    }
+    if ((iresult = __hmap_check(map)) < 0) {
+        return iresult;
+    }
+
+    // Search fpr the key's enrty
+    struct _hmap_entry* temp;
+    iresult |= __hmap_get(map, key, &temp);
+    *result = (temp->key != NULL);
+
+    return iresult;
 }
 
 e97_int hmap_put(struct hmap* map, void* key, void* value, void** oldValue) {
