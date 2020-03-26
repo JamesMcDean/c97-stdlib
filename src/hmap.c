@@ -36,8 +36,8 @@ e97_int hmap_check(struct hmap* map) {
     return __hmap_check(map);
 }
 
-int __default_hash(void* key) {
-    return (int) key;
+hash_t __default_hash(void* key) {
+    return (hash_t) key;
 }
 
 int __default_compare(void* a, void* b) {
