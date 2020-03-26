@@ -12,13 +12,13 @@ typedef int64_t e97_int;
 
 // Error String definitions
 #define E97_ERROR_STRING_MAX_CHAR 4 * (1 << 10) - 1
-char E97_ERRSTR[E97_ERROR_STRING_MAX_CHAR + 1] = {'\0'};
-bool E97_BLOCKCLEAR = false;
+static char E97_ERRSTR[E97_ERROR_STRING_MAX_CHAR + 1] = {'\0'};
+static bool E97_BLOCKCLEAR = false;
 #define E97_ERRSTR_CLR() { E97_ERRSTR[0] = '\0'; }
 #define E97_ERRSTR_ISCLR() (E97_ERRSTR[0] == '\0')
 #define E97_ERRSTR_WRITE(newErr) {\
     if (E97_ERRSTR_ISCLR() && !E97_BLOCKCLEAR) {\
-        sprintf(E97_ERRSTR, (newErr));\
+        sprintf(E97_ERRSTR, "%s", (newErr));\
     }\
     else {\
         sprintf(E97_ERRSTR, "%s: %s", E97_ERRSTR, (newErr));\
