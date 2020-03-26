@@ -4,11 +4,14 @@ CFLAGS = -O3 -Wno-cpp
 DFLAGS = $(CFLAGS) -g
 VFLAGS = $(DFLAGS) -DVERBOSE
 FFLAGS = -shared -fpic
-FILES = ./src/[^_]*
+CFILES = $(wildcard ./src/[^_]*.c)
+HFILES = $(wildcard ./src/[^_]*.h)
+FILES = $(CFILES) $(HFILES)
+BUILD_DIR = ./bld/.
 
 define BUILD_LIB
-	$(CC) $(1) $(FFLAGS) -o $(NAME).so $(FILES)
-	cp ./[^_]*.h ../bld/.
+	$(CC) $(1) $(FFLAGS) $(CFILES) -o $(NAME).so
+	cp $(HFILES) $(BUILD_DIR)
 endef
 
 default: $(FILES)
