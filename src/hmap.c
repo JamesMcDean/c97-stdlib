@@ -44,6 +44,53 @@ int __default_compare(void* a, void* b) {
     return ((int) a) - ((int) b);
 }
 
+e97_int __hmap_expand(struct hmap* map);
+
+e97_int __hmap_put(struct hmap* map, void* key, void* value, void** oldValue) {
+    // Running data
+    e97_int result;
+
+    // Error checks
+    if ((result = __hmap_check(map)) < 0) return result;
+    if (key == NULL) {
+        E97_ERRSTR_WRITE("Error: {param:}key == NULL is not allowed.");
+        return E97_ARGUMENT_NULL | result;
+    }
+
+    // Initial expansion
+    if ((double) map->count / map->_capacity > MAP_EXPAND_PERCENTAGE) {
+        if ((result |= __hmap_expand(map)) < 0) return result;
+    }
+
+    // Hash and find
+    struct _hmap_entry* entry;
+    result |= __hmap_get(map, key, &entry);
+
+    // New entry
+    if (entry->key == NULL) {
+        // Add
+        entry->dirty = true;
+        entry->key = key;
+        entry->value = value;
+
+        // Set return
+        if (oldValue != NULL) *oldValue = NULL;
+        result |= W97_HASH_REPLACE;
+
+        // Increment
+        map->count += 1;
+    }
+    else {
+        // Set return
+        if (oldValue != NULL) *oldValue = entry->value;
+
+        // Add value
+        entry->value = value;
+    }
+
+    return result;
+}
+
 e97_int __hmap_expand(struct hmap* map) {
     // Running data
     e97_int result = E97_NONE;
@@ -90,51 +137,6 @@ c97_int __hmap_get(struct hmap* map, void* key, struct _hmap_entry** result) {
     *result = entry;
 
     return entry->key == NULL ? W97_NOTFOUND : W97_FOUND;
-}
-
-e97_int __hmap_put(struct hmap* map, void* key, void* value, void** oldValue) {
-    // Running data
-    e97_int result;
-
-    // Error checks
-    if ((result = __hmap_check(map)) < 0) return result;
-    if (key == NULL) {
-        E97_ERRSTR_WRITE("Error: {param:}key == NULL is not allowed.");
-        return E97_ARGUMENT_NULL | result;
-    }
-
-    // Initial expansion
-    if ((double) map->count / map->_capacity > MAP_EXPAND_PERCENTAGE) {
-        if ((result |= __hmap_expand(map)) < 0) return result;
-    }
-
-    // Hash and find
-    struct _hmap_entry* entry;
-    result |= __hmap_get(map, key, &entry);
-
-    // New entry
-    if (entry->key == NULL) {
-        // Add
-        entry->dirty = true;
-        entry->key = key;
-        entry->value = value;
-
-        // Set return
-        if (oldValue != NULL) *oldValue = NULL;
-        result |= W97_HASH_REPLACE;
-
-        // Increment
-        map->count += 1;
-    }
-    else {
-        // Set return
-        if (oldValue != NULL) *oldValue = entry->value;
-
-        // Add value
-        entry->value = value;
-    }
-
-    return result;
 }
 
 e97_int hmap_init(struct hmap* map, hash_t (*keyHash)(void*), 
