@@ -150,12 +150,9 @@ e97_int vector_clear(struct vector* vec, bool freeData) {
 
     // Free data option
     if (freeData) {
-        void* current;
         for (size_t index = 0; index < vec->_capacity; index++) {
-            current = vec->data[index];
+            if (vec->data[index] != NULL) free(vec->data[index]);
         }
-
-        if (current != NULL);
     }
 
     // Set size to zero
