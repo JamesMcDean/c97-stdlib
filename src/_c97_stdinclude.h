@@ -14,4 +14,7 @@
 
 #include "c97_errors.h"
 
+// This is one of my favorite typedefs.
+typedef uint8_t byte;
+
 #endif
