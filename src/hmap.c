@@ -46,6 +46,30 @@ int __default_compare(void* a, void* b) {
 
 e97_int __hmap_expand(struct hmap* map);
 
+c97_int __hmap_get(struct hmap* map, void* key, struct _hmap_entry** result) {
+    // Find the key
+    hash_t hash = map->keyHash(key);
+    size_t index = HASH_TO_INDEX(hash, map->_capacity);
+    size_t offset = 1;
+    size_t iterNum = 1;
+    struct _hmap_entry* entry = &map->entries[index];
+
+    while (entry->key != NULL && !entry->dirty && 
+        map->keyCompare(key, entry->key) != 0) {
+        // Increment
+        index = (index + offset) % map->_capacity;
+        offset += 2 * iterNum;
+
+        // Reference
+        entry = &map->entries[index];
+    }
+
+    // Return the entry
+    *result = entry;
+
+    return entry->key == NULL ? W97_NOTFOUND : W97_FOUND;
+}
+
 e97_int __hmap_put(struct hmap* map, void* key, void* value, void** oldValue) {
     // Running data
     e97_int result;
@@ -113,30 +137,6 @@ e97_int __hmap_expand(struct hmap* map) {
     // Close up
     free(oldData);
     return result;
-}
-
-c97_int __hmap_get(struct hmap* map, void* key, struct _hmap_entry** result) {
-    // Find the key
-    hash_t hash = map->keyHash(key);
-    size_t index = HASH_TO_INDEX(hash, map->_capacity);
-    size_t offset = 1;
-    size_t iterNum = 1;
-    struct _hmap_entry* entry = &map->entries[index];
-
-    while (entry->key != NULL && !entry->dirty && 
-        map->keyCompare(key, entry->key) != 0) {
-        // Increment
-        index = (index + offset) % map->_capacity;
-        offset += 2 * iterNum;
-
-        // Reference
-        entry = &map->entries[index];
-    }
-
-    // Return the entry
-    *result = entry;
-
-    return entry->key == NULL ? W97_NOTFOUND : W97_FOUND;
 }
 
 e97_int hmap_init(struct hmap* map, hash_t (*keyHash)(void*), 
