@@ -190,7 +190,7 @@ e97_int hmap_get(struct hmap* map, void* key, void** value) {
     e97_int result = E97_NONE;
 
     if (key == NULL) {
-        E97_ERRSTR_WRITE("Error: The {param:}key cannot be NULL.")
+        E97_ERRSTR_WRITE("Error: The {param:}key cannot be NULL.");
         return result | E97_ARGUMENT_NULL;
     }
     if (value == NULL) {
