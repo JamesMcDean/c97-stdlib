@@ -1,6 +1,6 @@
 NAME = c97stdlib
 CC = gcc
-CFLAGS = -O3 -Wno-cpp -std=c11
+CFLAGS = -O3 -Wno-cpp -Wno-pointer-to-int-cast -std=c11
 DFLAGS = $(CFLAGS) -g
 VFLAGS = $(DFLAGS) -DVERBOSE
 FFLAGS = -shared -fpic
