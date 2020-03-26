@@ -53,7 +53,7 @@ enum C97_ERRORS {
     E97_HMAP_BAD_CLOSE = ERR_CONV(1ul << 22ul) | E97_BAD_CLOSE
 };
 
-#undef ERR_CONV(x)
+#undef ERR_CONV
 
 // Warning definitions
 enum C97_WARNINGS {
