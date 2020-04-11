@@ -1,7 +1,8 @@
 #ifndef C97_LLIST_H
 #define C97_LLIST_H
 
-#include "_c97_stdinclude.h"
+#include "c97_errors.h"
+#include <stdbool.h>
 
 /*
 The node structure involved in a doubly linked list.

@@ -1,4 +1,5 @@
 #include "llist.h"
+#include "_c97_stdinclude.h"
 
 e97_int __llist_check(struct llist* list, struct _llist_node** target, ssize_t index) {
     // Running data

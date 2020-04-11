@@ -1,4 +1,5 @@
 #include "hmap.h"
+#include "_c97_stdinclude.h"
 
 #define HASH_TO_INDEX(hash, cap) (((size_t) hash * 113) + 59) % (size_t) cap
 

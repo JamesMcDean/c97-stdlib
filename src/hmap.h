@@ -1,8 +1,9 @@
 #ifndef C97_MAP_H
 #define C97_MAP_H
 
-#include "_c97_stdinclude.h"
 #include "vector.h"
+#include "c97_errors.h"
+#include <stdbool.h>
 
 // Defines
 #define DEFAULT_MAP_CAPACITY 1 << 10
