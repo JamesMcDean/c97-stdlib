@@ -1,4 +1,5 @@
 #include "vector.h"
+#include "_c97_stdinclude.h"
 
 e97_int __vector_check(struct vector* vec) {
     // Running data
