@@ -2,6 +2,8 @@
 #define C97_VECTOR_H
 
 #include "_c97_stdinclude.h"
+#include "c97_errors.h"
+#include <stdbool.h>
 
 /*
 1K entries seems like a decent amount that *probably* won't break a page.
