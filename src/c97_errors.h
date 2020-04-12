@@ -18,12 +18,12 @@ typedef int64_t e97_int;
 static char E97_ERRSTR[E97_ERROR_STRING_MAX_CHAR + 1] = {'\0'};
 static bool E97_BLOCKCLEAR = false;
 
-#define E97_ERRSTR_CLR() { E97_ERRSTR[0] = '\0'; }
+#define E97_ERRSTR_CLR() { if (!E97_BLOCKCLEAR) E97_ERRSTR[0] = '\0'; }
 #define E97_ERRSTR_ISCLR() (E97_ERRSTR[0] == '\0')
 
 static inline void E97_ERRSTR_WRITE(char* error) {
     // Quick write
-    if (E97_ERRSTR_ISCLR() && !E97_BLOCKCLEAR) {
+    if (E97_ERRSTR_ISCLR()) {
         sprintf(E97_ERRSTR, "%s", error);
         return;
     }
