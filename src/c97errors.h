@@ -3,8 +3,8 @@
 
 #include <stdint.h>
 #include <stdio.h>
-#include <stdbool.h>
 #include <string.h>
+#include <stdbool.h>
 
 // Normal return
 typedef uint32_t c97_int;
@@ -15,34 +15,11 @@ typedef int64_t e97_int;
 // Error String definitions
 #define E97_ERROR_STRING_MAX_CHAR 4 * (1 << 10) - 1
 
-static char E97_ERRSTR[E97_ERROR_STRING_MAX_CHAR + 1] = {'\0'};
-static bool E97_BLOCKCLEAR = false;
-
-#define E97_ERRSTR_CLR() { if (!E97_BLOCKCLEAR) E97_ERRSTR[0] = '\0'; }
-#define E97_ERRSTR_ISCLR() (E97_ERRSTR[0] == '\0')
-
-static inline void E97_ERRSTR_WRITE(char* error) {
-    // Quick write
-    if (E97_ERRSTR_ISCLR()) {
-        sprintf(E97_ERRSTR, "%s", error);
-        return;
-    }
-
-    // Write onto the end of the string
-    // Running data
-    size_t start = strlen(E97_ERRSTR);
-    size_t argLength = strlen(error);
-
-    for (size_t index = start, jndex = 0; index < E97_ERROR_STRING_MAX_CHAR 
-        && jndex < argLength;) {
-        // Copy char
-        E97_ERRSTR[index] = error[jndex];
-
-        // Increment
-        index += 1;
-        jndex += 1;
-    }
-}
+char* E97_ERRSTR();
+bool* E97_BLOCKCLEAR();
+void E97_ERRSTR_WRITE(char* error);
+void E97_ERRSTR_CLR();
+bool E97_ERRSTR_ISCLR();
 
 // Error definitions
 #define ERR_CONV(x) ((1 << 31) | (x)) << 32

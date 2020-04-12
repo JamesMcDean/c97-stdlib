@@ -2,7 +2,7 @@
 #define C97_MAP_H
 
 #include "vector.h"
-#include "c97_errors.h"
+#include "c97errors.h"
 #include <stdbool.h>
 
 // Defines

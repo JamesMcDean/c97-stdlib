@@ -287,7 +287,7 @@ e97_int hmap_getKeys(struct hmap* map, struct vector* keys) {
         return result;
     }
 
-    E97_BLOCKCLEAR = true;
+    *(E97_BLOCKCLEAR()) = true;
     if ((result |= vector_check(keys)) < 0) {
         return result;
     }
@@ -301,7 +301,7 @@ e97_int hmap_getKeys(struct hmap* map, struct vector* keys) {
         current = &map->entries[index];
         if (current->key != NULL) vector_append(keys, current->key);
     }
-    E97_BLOCKCLEAR = false;
+    *(E97_BLOCKCLEAR()) = false;
 
     // This shouldn't happen but it might
     assert(keys->size == map->count);

@@ -1,7 +1,7 @@
 #ifndef C97_VECTOR_H
 #define C97_VECTOR_H
 
-#include "c97_errors.h"
+#include "c97errors.h"
 #include <stdbool.h>
 
 /*
