@@ -175,7 +175,7 @@ e97_int llist_append(struct llist* list, void* data) {
 e97_int __llist_remove(struct llist* list, size_t index, void** data) {
     // Get and error check
     if (list->size == 0) {
-        sprintf(E97_ERRSTR, "Error: Nothing to remove, llist is empty.");
+        E97_ERRSTR_WRITE("Error: Nothing to remove, llist is empty.");
         return E97_LLIST_EMPTY;
     } 
 
